@@ -1,0 +1,4 @@
+# alignment options
+TRANSPOSON_FASTA: ../data/genome/dmel_repbase_lib.fasta
+HETCHROM_FASTA: ../data/genome/hetchrom_dmel_scaffold2_V5.fasta
+#HETCHROM_GTF: ../data/genome/hetchrom_dmel_scaffold2_V5.gtf
