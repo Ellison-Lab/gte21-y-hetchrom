@@ -33,7 +33,7 @@ ins <- rmskr %>%
   unite(ins_id, `repeat`,'id', sep='.',remove = F) %>%
   mutate_at(vars(c('repeat.start','repeat.left')),~as.numeric(str_remove_all(.,regex('[\\(\\)]')))) %>%
   mutate(repeat.size = max(repeat.end,repeat.start) + repeat.left) %>%
-  mutate(repeat.pct.missing = repeat.left/repeat.size) %>%
+  mutate(repeat.pct.missing = (repeat.left + min(repeat.end,repeat.start))/repeat.size) %>%
   dplyr::select(chr,start,end,`repeat`,ins_id, strand, repeat.left, repeat.pct.missing) %>%
   mutate(queryHits = row_number()) %>%
   left_join(lookup, by=c(`repeat`='gene_id')) %>%
