@@ -32,8 +32,9 @@ ins <- rmskr %>%
   filter(is.na(star)) %>%
   unite(ins_id, `repeat`,'id', sep='.',remove = F) %>%
   mutate_at(vars(c('repeat.start','repeat.left')),~as.numeric(str_remove_all(.,regex('[\\(\\)]')))) %>%
-  mutate(repeat.size = max(repeat.end,repeat.start) + repeat.left) %>%
-  mutate(repeat.pct.missing = (repeat.left + min(repeat.end,repeat.start))/repeat.size) %>%
+  mutate(repeat.size = pmap_dbl(.l = list(end=repeat.end, start=repeat.start, left=repeat.left), .f=function(end,start,left) {max(end,start) + left})) %>%
+  mutate(repeat.missing = pmap_dbl(.l=list(left=repeat.left, end=repeat.end, start=repeat.start), .f=function(left, end, start) {left + min(end,start)})) %>%
+  mutate(repeat.pct.missing = repeat.missing/repeat.size) %>%
   dplyr::select(chr,start,end,`repeat`,ins_id, strand, repeat.left, repeat.pct.missing) %>%
   mutate(queryHits = row_number()) %>%
   left_join(lookup, by=c(`repeat`='gene_id')) %>%
@@ -42,7 +43,6 @@ ins <- rmskr %>%
   mutate(name = ins_id) %>%
   mutate(strand = ifelse(strand == 'C','-',strand)) %>%
   group_by(ins_id) %>%
-  filter(sum(repeat.pct.missing) < .2) %>%
   ungroup()
 
 # degenerate/degraded repeats are merged.
