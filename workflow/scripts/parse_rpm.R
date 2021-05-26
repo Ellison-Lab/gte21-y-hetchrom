@@ -24,9 +24,6 @@ rmskr <- read_table2(rmskr_fl, skip=2, col_names = cn)
 
 # 'star' here means that a better overlapping match exists, so these records will be removed.
 
-# We also filter out insertions that are less than 80 pct of the full length.
-
-# the terminal repeats of ltrs are not included.
 
 ins <- rmskr %>%
   filter(is.na(star)) %>%
@@ -38,7 +35,7 @@ ins <- rmskr %>%
   dplyr::select(chr,start,end,`repeat`,ins_id, strand, repeat.left, repeat.pct.missing) %>%
   mutate(queryHits = row_number()) %>%
   left_join(lookup, by=c(`repeat`='gene_id')) %>%
-  filter(is.na(component) | component %in% c(2,3,4)) %>%
+  #filter(is.na(component) | component %in% c(2,3,4)) %>%
   filter(!is.na(merged_te)) %>%
   mutate(name = ins_id) %>%
   mutate(strand = ifelse(strand == 'C','-',strand)) %>%
