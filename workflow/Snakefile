@@ -42,13 +42,36 @@ rule repeatmasker_hetchrom:
             {input.fasta}
         """
 
-rule parse_repeatmasker_y:
+rule bedops_parse_repeatmasker_y:
     input:
         rpmskr = rules.repeatmasker_hetchrom.output[2],
         lookup = "resources/te_id_lookup.curated.tsv.txt"
+    output:
+        "results/hetchrom-ins/parsed_by_bedops.tsv"
+    conda:
+        "envs/bedops.yaml"
+    shell:
+        """
+        rmsk2bed < {input.rpmskr} > {output}
+        """
+
+rule r_parse_repeatmasker_y:
+    input:
+        rules.bedops_parse_repeatmasker_y.output
     output:
         bed_all = "results/hetchrom-ins/insertions.csv"
     conda:
         "envs/bioc-general.yaml"
     script:
-        "scripts/parse_rpm.R"
+        "scripts/parse_rpm_2.R"
+
+# rule parse_repeatmasker_y_old:
+#     input:
+#         rpmskr = rules.repeatmasker_hetchrom.output[2],
+#         lookup = "resources/te_id_lookup.curated.tsv.txt"
+#     output:
+#         bed_all = "results/hetchrom-ins/insertions.csv"
+#     conda:
+#         "envs/bioc-general.yaml"
+#     script:
+#         "scripts/parse_rpm.R"
