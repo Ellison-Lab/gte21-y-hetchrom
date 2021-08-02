@@ -12,7 +12,7 @@ res <- res %>% filter(!str_detect(te,"[-_]LTR"))
 
 res <- res %>% mutate_at(c("bases.past.match","match.end"), ~as.numeric(str_remove_all(.,"[\\(\\)]")))
 
-res <- res %>% dplyr::select(chrom,te, start, end, match.start, match.end, del.pct, ins.id) %>%
+res <- res %>% dplyr::select(chrom,te, start, end, match.start, match.end, del.pct, ins.id, bases.in.cons.complement) %>%
   mutate(ins.size = abs(match.start-match.end))
 
 write_csv(res,snakemake@output[["bed_all"]])
